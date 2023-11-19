@@ -31,9 +31,9 @@ const items = ref([
     }
   },
   {
-    icon: 'pi pi-sun',
+    icon: 'pi pi-chart-bar',
     command: () => {
-      router.push('/forecast');
+      router.push('/statistics');
     }
   },
 ]);

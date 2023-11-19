@@ -9,9 +9,9 @@ const router = createRouter({
       component: () => import('../views/HomeView.vue')
     },
     {
-      path: '/forecast',
-      name: 'forecast',
-      component: () => import('../views/WeatherView.vue')
+      path: '/statistics',
+      name: 'statistics',
+      component: () => import('../views/StatisticsView.vue')
     }
   ]
 })

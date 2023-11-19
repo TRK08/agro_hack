@@ -14,6 +14,16 @@
     <OverlayPanel ref="overlayPanel" class="map__filters-overlay">
       <Calendar v-model="date" date-format="dd.mm.yy" placeholder="Выберите дату" />
 
+      <Dropdown
+          v-model="selectedVirus"
+          :options="optionsVirus"
+          optionLabel="name"
+          placeholder="Выберите заболевание"
+          style="width: 100%;"
+      />
+
+      <Button label="Применить" @click="getForecast"></Button>
+
       <Button class="map__filters-export" @click="exportMap">
         <span>Скриншот карты</span>
         <i class="pi pi-download" />
@@ -31,18 +41,80 @@ import {Map as Maptalks, TileLayer} from 'maptalks'
 import { HeatLayer } from 'maptalks.heatmap';
 import 'maptalks/dist/maptalks.css'
 
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
+import {storeToRefs} from "pinia";
+import {useForecastStore} from "@/stores/forecast";
+import Dropdown from "primevue/dropdown";
+
+
+const {forecast} = storeToRefs(useForecastStore())
+const {fetchForecast} = useForecastStore()
 
 const overlayPanel = ref(null)
 const date = ref(new Date());
-const map = ref(null);
+const selectedVirus = ref({
+  name: 'Милдью или ложная мучнистая роса',
+  code: 'mild'
+})
+const optionsVirus = ref([
+  {
+    name: 'Милдью или ложная мучнистая роса',
+    code: 'mild'
+  },
+  {
+    name: 'Оидиум',
+    code: 'oidium'
+  },
+  {
+    name: 'Антракноз',
+    code: 'antra'
+  },
+  {
+    name: 'Серая гниль',
+    code: 'gray'
+  },
+  {
+    name: 'Чёрная пятнистость',
+    code: 'blackDots'
+  },
+  {
+    name: 'Чёрная гниль',
+    code: 'black'
+  },
+  {
+    name: 'Белая гниль',
+    code: 'white'
+  },
+  {
+    name: 'Вертициллезноеувядание (вилт)',
+    code: 'vilt'
+  },
+  {
+    name: 'Альтернариоз',
+    code: 'alternarioz'
+  },
+  {
+    name: 'Фузариоз',
+    code: 'fuzarioz'
+  },
+  {
+    name: 'Краснуха',
+    code: 'krasnuha'
+  },
+  {
+    name: 'Бактериальный рак',
+    code: 'bakterial'
+  },
+]);
 
+const map = ref(null);
 
 onMounted(() => {
   map.value = new Maptalks('map', {
     center: [38.97603, 45.04484],
     zoom: 12,
     maxZoom : 14,
+    minZoom : 5,
     attribution: false,
     baseLayer: new TileLayer('base', {
       urlTemplate: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
@@ -50,9 +122,25 @@ onMounted(() => {
     })
   });
 
-  const data = [[38.97603, 45.14484, 0.9], [38.97603, 45.01484, 0.4], [38.97603, 45.04484, 0.4]];
+  const data = forecast.value.threat?.map(item => [forecast.value.lat, forecast.value.lon, item])
   new HeatLayer('heat', data).addTo(map.value);
 })
+
+
+watch(forecast, () => {
+  const data = forecast.value.threat?.map(item => [forecast.value.lat, forecast.value.lon, item])
+  new HeatLayer(`heat${Math.random()}`, data).addTo(map.value);
+})
+
+const getForecast = async () => {
+  await fetchForecast({
+    lat: 38.97603,
+    lon: 45.04484,
+    disease: selectedVirus.value.code,
+    start_datetime: date.value.toLocaleDateString()
+  })
+}
+
 
 const zoomIn = () => {
   // @ts-ignore
