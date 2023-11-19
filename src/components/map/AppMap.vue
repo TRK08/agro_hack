@@ -122,13 +122,15 @@ onMounted(() => {
     })
   });
 
+  // @ts-ignore
   const data = forecast.value.threat?.map(item => [forecast.value.lat, forecast.value.lon, item])
   new HeatLayer('heat', data).addTo(map.value);
 })
 
 
 watch(forecast, () => {
-  const data = forecast.value.threat?.map(item => [forecast.value.lat, forecast.value.lon, item])
+  // @ts-ignore
+  const data = forecast.value.threat.map(item => [forecast.value.lat, forecast.value.lon, item])
   new HeatLayer(`heat${Math.random()}`, data).addTo(map.value);
 })
 

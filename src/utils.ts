@@ -1,7 +1,8 @@
 
 
 
-export const normalizeData = (data) => {
+// @ts-ignore
+export const normalizeData = (data: any) => {
     const result = {...data}
 
     console.log(result, 'RESULT')

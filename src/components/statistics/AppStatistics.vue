@@ -133,7 +133,8 @@ const setChartData = () => {
   return {
     labels: forecast.value.time,
     datasets: [{
-      label: map[forecast.value.disease],
+      // @ts-ignore
+      label: map[forecast.value.disease] || '',
       data: forecast.value.threat,
       fill: false,
       borderColor: getRandomColor(),
