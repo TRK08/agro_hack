@@ -1,9 +1,9 @@
+<template>
+  <AppMap />
+</template>
+
+
 <script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
+import AppMap from "@/components/map/AppMap.vue";
 </script>
 
-<template>
-  <main>
-    <TheWelcome />
-  </main>
-</template>
